@@ -1,0 +1,6 @@
+*.xml
+*.ini
+.idea/
+
+app/vendor
+/app/composer.lock
