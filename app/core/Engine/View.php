@@ -23,7 +23,7 @@ class View {
      * @param string $pathOfDependency
      * @param bool $isExternal
      */
-    public function loadJSDependence(string $pathOfDependency, $isExternal = false) {
+    public static function loadJSDependence(string $pathOfDependency, $isExternal = false) {
 
         echo
             '
@@ -42,7 +42,7 @@ class View {
      * @param string $media
      * @param bool $isExternal
      */
-    public function loadCSSDependence(string $pathOfDependency, string $media = 'all', bool $isExternal = false) {
+    public static function loadCSSDependence(string $pathOfDependency, string $media = 'all', bool $isExternal = false) {
 
         echo
             '
@@ -63,7 +63,7 @@ class View {
      * @param bool $isExternal
      */
 
-    public function loadImage (string $imagePath, string $class = '', $moreParams = '', bool $isExternal = false) {
+    public static function loadImage (string $imagePath, string $class = '', $moreParams = '', bool $isExternal = false) {
 
         echo
         '
@@ -84,7 +84,7 @@ class View {
      * @param string $globalPath
      * @param string $pathSeparator
      */
-    public function printGlobalValue (string $globalPath, string $pathSeparator = '->') {
+    public static function printGlobalValue (string $globalPath, string $pathSeparator = '->') {
 
         echo GlobalValue::get($globalPath, $pathSeparator);
 
@@ -94,11 +94,11 @@ class View {
      * Chama uma lista de dependencias JS automaticamente
      * @param array $requiredJSList
      */
-    public function loadJSList (array $requiredJSList) {
+    public static function loadJSList (array $requiredJSList) {
 
         foreach ($requiredJSList as $currentRequiredJS) {
 
-            $this->loadJSDependence($currentRequiredJS);
+            self::loadJSDependence($currentRequiredJS);
 
         }
 
@@ -108,11 +108,11 @@ class View {
      * Chama uma lista de dependencias CSS automaticamente
      * @param array $requiredCSSList
      */
-    public function loadCSSList (array $requiredCSSList) {
+    public static function loadCSSList (array $requiredCSSList) {
 
         foreach ($requiredCSSList as $currentRequiredCSS) {
 
-            $this->loadCSSDependence($currentRequiredCSS);
+            self::loadCSSDependence($currentRequiredCSS);
 
         }
 

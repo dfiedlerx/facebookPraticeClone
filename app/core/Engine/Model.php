@@ -27,7 +27,7 @@ class Model
 
     }
 
-    protected static function getDBConn () {
+    public static function getDBConn () {
 
         if (!self::$databaseConnection) {
 

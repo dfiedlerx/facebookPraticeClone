@@ -14,8 +14,7 @@ class Controller
 
     public function __construct() {
 
-        //Inicia a classe view para uso
-        $this->view = new View();
+
 
     }
 

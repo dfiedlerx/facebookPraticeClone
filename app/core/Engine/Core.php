@@ -34,30 +34,32 @@ use System\Models\Tools\Basic\StringC;
 class Core
 {
 
-    private $currentController;
-    private $currentAction;
-    private $urlParameters;
-    private $methodParams = [];
-    private $controllerExists = false;
+    private static $currentController;
+    private static $currentAction;
+    private static $urlParameters;
+    private static $methodParams = [];
+    private static $controllerExistsAndIsUsable = false;
+    private static $methodExists = false;
 
     /**
      * Gerenciador do Core
      */
-    public function run () {
+    public static function run () {
 
-        $this->trateUrl();
-        $this->makeParametersArray();
-        $this->setControllerAndAction();
-        $this->callControllerAndAction();
+        Model::getDBConn();
+        self::trateUrl();
+        self::makeParametersArray();
+        self::setControllerAndAction();
+        self::callControllerAndAction();
 
     }
 
     /**
      * Remove domínio da url e remove parametros GET
      */
-    private function trateUrl () {
+    private static function trateUrl () {
 
-        $this->urlParameters = str_replace
+        self::$urlParameters = str_replace
         (
 
             SYSTEM_DIRECTORY,
@@ -66,29 +68,29 @@ class Core
 
         );
 
-        $this->urlParameters =
-            StringC::removeAllAfterTerm('?', $this->urlParameters);
+        self::$urlParameters =
+            StringC::removeAllAfterTerm('?', self::$urlParameters);
 
     }
 
     /**
      * Método que irá destrinchar a urlParameters e obtera o Controller e a action em um array.
      */
-    private function makeParametersArray () {
+    private static function makeParametersArray () {
 
-        $this->urlParameters = explode('/', $this->urlParameters);
+        self::$urlParameters = explode('/', self::$urlParameters);
 
         //Caso o link padrão seja o diretório raiz do sistema
-        if ($this->paramExistsAndIsEmpty(0)) {
+        if (self::paramExistsAndIsEmpty(0)) {
 
-            $this->removeFirstParameter();
+            self::removeFirstParameter();
 
         }
 
         //Converte para maiscula todas as primeiras letras de cada parâmetro
-        foreach ($this->urlParameters as $paramKey => $currentParam) {
+        foreach (self::$urlParameters as $paramKey => $currentParam) {
 
-            $this->urlParameters[$paramKey] = ucfirst($currentParam);
+            self::$urlParameters[$paramKey] = ucfirst($currentParam);
 
         }
 
@@ -99,37 +101,38 @@ class Core
      * $currentAction;
      *
      */
-    private function setControllerAndAction () {
+    private static function setControllerAndAction () {
 
-        $countParams = count($this->urlParameters);
+        $countParams = count(self::$urlParameters);
 
-        if ($countParams > 0 && !empty ($this->urlParameters[0])) {
+        if ($countParams > 0 && !empty (self::$urlParameters[0])) {
 
-            $this->tryToFindControllerAndAction($countParams);
+            self::tryToFindControllerAndAction($countParams);
 
         } else {
 
-            $this->defaultController();
-            $this->controllerExists = true;
-            $this->defaultAction();
+            self::defaultController();
+            self::$controllerExistsAndIsUsable = true;
+            self::defaultAction();
 
         }
 
     }
 
-    private function tryToFindControllerAndAction (int $countParams) {
+    private static function tryToFindControllerAndAction (int $countParams) {
 
         $itCount = 1;
         $possibleAction = '';
 
         while ($itCount <= $countParams) {
 
-            $possibleClassName = $this->urlParameters[$countParams - $itCount];
-            $controllerNamespace = $this->getNamespaceController() . '\\' . $possibleClassName . CONTROLLERS_COMPLEMENT;
+            $possibleClassName = self::$urlParameters[$countParams - $itCount];
+            $controllerNamespace = self::getNamespaceController() . '\\' . $possibleClassName . CONTROLLERS_COMPLEMENT;
+            self::$methodExists = method_exists($controllerNamespace, $possibleAction);
 
-            if($this->ControllerExists($controllerNamespace)) {
+            if(self::$methodExists) {
 
-                array_pop($this->methodParams);
+                array_pop(self::$methodParams);
 
             }
 
@@ -138,27 +141,31 @@ class Core
             (
                 $itCount > 1
                 &&
-                $this->ClassAndMethodExistsAndParamsAreValid($controllerNamespace, $possibleAction)
+                self::ClassAndMethodExistsAndParamsAreValid($controllerNamespace, $possibleAction)
             ) {
 
-                $this->currentController = $controllerNamespace;
-                $this->currentAction = $possibleAction;
-                $this->controllerExists = true;
-                $this->methodParams = array_reverse($this->methodParams);
+                self::$currentController = $controllerNamespace;
+                self::$currentAction = $possibleAction;
+                self::$controllerExistsAndIsUsable = true;
+                self::$methodParams = array_reverse(self::$methodParams);
+
+            } else if (self::$methodExists) {
+
+                self::$controllerExistsAndIsUsable = false;
+
+            } else if (self::ClassAndMethodExistsAndParamsAreValid($controllerNamespace, DEFAULT_ACTION)) {
+
+                self::$currentController = $controllerNamespace;
+                self::defaultAction();
+                self::$controllerExistsAndIsUsable = true;
                 break;
 
-            } else if ($this->ClassAndMethodExistsAndParamsAreValid($controllerNamespace, DEFAULT_ACTION)) {
+            }  else {
 
-                $this->currentController = $controllerNamespace;
-                $this->defaultAction();
-                $this->controllerExists = true;
-                break;
-
-            } else {
-
-                $this->methodParams[] = strtolower($possibleClassName);
+                self::$methodParams[] = strtolower($possibleClassName);
                 $possibleAction = strtolower($possibleClassName);
-                $this->removeLastParameter();
+                self::removeLastParameter();
+                self::$controllerExistsAndIsUsable = false;
 
             }
 
@@ -168,9 +175,9 @@ class Core
 
     }
 
-    private function getNamespaceController () : string {
+    private static function getNamespaceController () : string {
 
-        return CONTROLLERS_ROUTE . implode('\\', $this->urlParameters);
+        return CONTROLLERS_ROUTE . implode('\\', self::$urlParameters);
 
     }
 
@@ -178,9 +185,9 @@ class Core
      * Remove o primeiro parametro do array.
      * @return mixed
      */
-    private function removeFirstParameter () {
+    private static function removeFirstParameter () {
 
-        return array_shift($this->urlParameters);
+        return array_shift(self::$urlParameters);
 
     }
 
@@ -188,9 +195,9 @@ class Core
      * Remove o ultimo parâmetro do array
      * @return mixed
      */
-    private function removeLastParameter () {
+    private static function removeLastParameter () {
 
-        return array_pop($this->urlParameters);
+        return array_pop(self::$urlParameters);
 
     }
 
@@ -199,26 +206,26 @@ class Core
      * @param int $paramIndex
      * @return bool
      */
-    private function paramExistsAndIsEmpty (int $paramIndex) : bool {
+    private static function paramExistsAndIsEmpty (int $paramIndex) : bool {
 
         return
-            isset ($this->urlParameters[$paramIndex]) &&
-            ($this->urlParameters[$paramIndex] == '' || is_null($this->urlParameters[$paramIndex]));
+            isset (self::$urlParameters[$paramIndex]) &&
+            (self::$urlParameters[$paramIndex] == '' || is_null(self::$urlParameters[$paramIndex]));
 
     }
 
     //Seta o Controller Padrão
-    private function defaultController () {
+    private static function defaultController () {
 
-        $this->currentController =
+        self::$currentController =
             CONTROLLERS_ROUTE . DEFAULT_CONTROLLER . '\\' .DEFAULT_CONTROLLER . CONTROLLERS_COMPLEMENT;
 
     }
 
     //Seta a action como padrão;
-    private function defaultAction () {
+    private static function defaultAction () {
 
-        return $this->currentAction = DEFAULT_ACTION . ACTION_COMPLEMENT;
+        return self::$currentAction = DEFAULT_ACTION . ACTION_COMPLEMENT;
 
     }
 
@@ -226,22 +233,25 @@ class Core
      * Faz a chamada das classes correspondetes de controller e view.
      *
      */
-    private function callControllerAndAction () {
+    private static function callControllerAndAction () {
 
         //Caso o Controller e a Action existam.
-        if ($this->controllerExists) {
+        if (self::$controllerExistsAndIsUsable) {
 
-            $callController = new $this->currentController();
+            $callController = new self::$currentController();
 
-            if (!call_user_func_array (array($callController, $this->currentAction), $this->methodParams)) {
+            //Traduz termos da url para termos comuns
+            self::$methodParams = StringC::urlDecodeArray(self::$methodParams);
 
-                $this->notFoundPage();
+            if (!call_user_func_array (array($callController, self::$currentAction), self::$methodParams)) {
+
+                self::notFoundPage();
 
             }
 
         } else {
 
-            $this->notFoundPage();
+            self::notFoundPage();
 
         }
 
@@ -254,19 +264,15 @@ class Core
      * @return bool
      * @throws ReflectionException
      */
-    private function ClassAndMethodExistsAndParamsAreValid (string $className, string $methodName) : bool {
+    private static function ClassAndMethodExistsAndParamsAreValid (string $className, string $methodName) : bool {
 
-        return method_exists($className, $methodName) && $this->validateNumberOfParamsAndPublicMethod($className, $methodName);
+        if ($methodName == DEFAULT_ACTION) {
 
-    }
+            self::$methodExists = method_exists($className, $methodName);
 
-    /**
-     * @param string $className
-     * @return bool
-     */
-    private function ControllerExists (string $className) : bool {
+        }
 
-        return class_exists($className);
+        return self::$methodExists && self::validateNumberOfParamsAndPublicMethod($className, $methodName);
 
     }
 
@@ -279,10 +285,10 @@ class Core
      * @return bool
      * @throws ReflectionException
      */
-    private function validateNumberOfParamsAndPublicMethod (string $className, string $methodName) : bool {
+    private static function validateNumberOfParamsAndPublicMethod (string $className, string $methodName) : bool {
 
         $targetCallable = new ReflectionMethod ($className, $methodName);
-        $numberOfUrlParameters = count($this->methodParams);
+        $numberOfUrlParameters = count(self::$methodParams);
 
         //Caso o numero de parametros seja >= ao numero de parametros obrigatorios e <= ao numero de parametros no total
         return $numberOfUrlParameters >= $targetCallable->getNumberOfRequiredParameters()
@@ -297,7 +303,7 @@ class Core
      * Chama uma página informando que o conteudo não foi encontrado.
      * 
      */
-    private function notFoundPage () : bool {
+    private static function notFoundPage () : bool {
 
         $controllerConstant = CONTROLLERS_ROUTE . 'PageNotFound\PageNotFound' . CONTROLLERS_COMPLEMENT;
 

@@ -281,4 +281,23 @@ class StringC
 
     }
 
+    public static function urlDecodeArray ($terms) {
+
+
+        foreach ($terms as $key => $term) {
+
+            $terms[$key] = self::urlDecode($term);
+
+        }
+
+        return $terms;
+
+    }
+
+    public static function urlDecode (string $term) {
+
+        return urldecode($term);
+
+    }
+
 }
