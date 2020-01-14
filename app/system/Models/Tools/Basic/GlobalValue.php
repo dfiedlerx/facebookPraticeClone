@@ -50,7 +50,7 @@ class GlobalValue
 
             if(!isset($arrayValue[$part])) {
 
-                return DEFAULT_NO_GLOBAL_VALUE;
+                return 'UNDEFINED';
 
             }
 
