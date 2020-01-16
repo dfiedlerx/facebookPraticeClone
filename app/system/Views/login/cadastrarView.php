@@ -11,7 +11,7 @@ use System\Models\Tools\Basic\GlobalValue;
     if (GlobalValue::exists('view->message')) {
         ?>
         <div class="alert alert-danger">
-            <?php View::value(GlobalValue::get('view->error')) ?>
+            <?php View::value(GlobalValue::get('view->message')) ?>
         </div>
         <?php
     }

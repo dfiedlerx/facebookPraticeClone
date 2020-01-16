@@ -83,7 +83,7 @@ class Usuarios extends Model
 
         if (!is_bool($usuario) && !ArrayC::empty($usuario)) {
 
-            GlobalValue::set('view->message', 'Email já usado por outra conta');
+            GlobalValue::set('Email já usado por outra conta', 'view->message');
 
         } else if (self::insert($nome, $email, $senha, $sexo)) {
 
@@ -102,7 +102,7 @@ class Usuarios extends Model
 
         } else {
 
-            GlobalValue::set('view->message', 'Houve um problema. Tente novamente.');
+            GlobalValue::set('Houve um problema. Tente novamente.', 'view->message');
 
         }
 
