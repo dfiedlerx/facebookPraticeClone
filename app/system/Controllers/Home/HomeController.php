@@ -3,7 +3,7 @@
 
 use Core\Engine\Controller;
 use System\Models\Home\HomeMailer;
-use System\Models\Tools\Basic\GlobalValue;
+use System\Models\Tools\Basic\Session;
 
 session_start();
 
@@ -17,6 +17,7 @@ class HomeController extends Controller
     public function __construct() {
 
         parent::__construct();
+        Session::controlLoginSessionPage('lgsocial');
 
     }
 

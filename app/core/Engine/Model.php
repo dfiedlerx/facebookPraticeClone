@@ -18,7 +18,7 @@ class Model
     /**
      * @var DatabaseCore
      */
-    public static $databaseConnection;
+    public static $DB;
 
     public function __construct() {
 
@@ -29,10 +29,10 @@ class Model
 
     public static function getDBConn () {
 
-        if (!self::$databaseConnection) {
+        if (!self::$DB) {
 
-            self::$databaseConnection = new DatabaseConnection(DB_TYPE, DB_USER, DB_PASS, DB_HOST, DB_NAME, DB_ATTRIBUTES);
-            self::$databaseConnection = self::$databaseConnection->getConnection();
+            self::$DB = new DatabaseConnection(DB_TYPE, DB_USER, DB_PASS, DB_HOST, DB_NAME, DB_ATTRIBUTES);
+            self::$DB = self::$DB->getConnection();
 
         }
 

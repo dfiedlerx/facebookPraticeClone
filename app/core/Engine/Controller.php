@@ -10,8 +10,6 @@
 class Controller
 {
 
-    protected $view;
-
     public function __construct() {
 
 
@@ -92,20 +90,6 @@ class Controller
     protected function sessionExists () : bool {
 
         return session_status() === PHP_SESSION_ACTIVE;
-
-    }
-
-    protected function redirect ($location, $header = true) {
-
-        if ($header) {
-
-            header('Location: '. $location);
-
-        } else {
-
-            echo '<script>window.location = "'.$location.'"</script>';
-
-        }
 
     }
 

@@ -30,9 +30,9 @@ class View {
             <script src="',
             (
                 !$isExternal
-                    ? SERVER_LINK . JS_DIRECTORY.$pathOfDependency . '.js"'
+                    ? SERVER_LINK . JS_DIRECTORY.$pathOfDependency . '.js'
                     : $pathOfDependency
-            ),'></script>
+            ),'"></script>
             ';
 
     }
@@ -49,7 +49,7 @@ class View {
             <link rel="stylesheet" type="text/css" href="',
             (
                 !$isExternal
-                    ? SERVER_LINK . CSS_DIRECTORY.$pathOfDependency . '.css'
+                    ? SERVER_LINK . CSS_DIRECTORY . $pathOfDependency . '.css'
                     : $pathOfDependency
             ),'" media="',$media,'">
             ';
@@ -115,6 +115,23 @@ class View {
             self::loadCSSDependence($currentRequiredCSS);
 
         }
+
+    }
+
+    public static function value ($value) {
+
+        echo $value;
+
+    }
+
+    public static function link ($path = '', $internal = true) {
+
+        self::value
+        (
+            $internal
+                ? SERVER_LINK . $path
+                : $path
+        );
 
     }
 

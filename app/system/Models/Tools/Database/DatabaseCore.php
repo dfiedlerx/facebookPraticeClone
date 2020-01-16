@@ -15,9 +15,9 @@ class DatabaseCore extends DatabaseCase
      */
     private function bindValue ($arrayBinds, PDOStatement $PDOStatment) {
 
-        foreach ($arrayBinds as $currentBind) {
+        foreach ($arrayBinds as $key => $currentBind) {
 
-            $PDOStatment->bindValue($currentBind['0'], $currentBind['1']);
+            $PDOStatment->bindValue($key, $currentBind);
 
         }
 

@@ -42,4 +42,49 @@ class Session
 
     }
 
+    /**
+     * @param string $key
+     * @param bool $allowEmpty
+     * @return bool
+     */
+    public static function sessionKeyExists (string $key, $allowEmpty = false) : bool {
+
+        return (!$allowEmpty && !empty($_SESSION[$key])) || ($allowEmpty && isset($_SESSION[$key]));
+
+    }
+
+    /**
+     * @param string $sessionKey
+     * @return bool
+     */
+    public static function isLogged ($sessionKey = '') {
+
+        return
+            $sessionKey === ''
+                ? self::hasSession()
+                : self::sessionKeyExists('lgsocial');
+
+    }
+
+    /**
+     * @param string $sessionKey
+     * @param bool $obgLogin
+     */
+    public static  function controlLoginSessionPage ($sessionKey = '', $obgLogin = true) {
+
+        $isLogged = self::isLogged($sessionKey);
+
+        if ($isLogged && !$obgLogin) {
+
+            Url::redirect(LOGGED_ROUTE);
+
+        } else if (!$isLogged && $obgLogin) {
+
+            Url::redirect(NOT_LOGGED_ROUTE);
+
+        }
+
+    }
+
+
 }

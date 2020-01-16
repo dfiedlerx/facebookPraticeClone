@@ -11,3 +11,7 @@ define ('DEFAULT_COOKIE_EXPIRATION', 10000000000);
 
 //Número de ciclos padrões para uso na função crypt.
 define ('DEFAULT_CRYPTO_CICLE', '$2a$10$');
+
+//Rota chamada caso usuario não esteja logado
+define('LOGGED_ROUTE', '/home');
+define('NOT_LOGGED_ROUTE', '/login');

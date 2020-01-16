@@ -47,14 +47,10 @@ class Crypto
 	public static function passwordHashGenerator (string $contentToConvert) :string {
 
 		return
-            StringC::subsStrTerm(
-                crypt
-                (
-                    $contentToConvert,
-                    DEFAULT_CRYPTO_CICLE.self::hashKeyGenerator().'$'
-                ),
-                DEFAULT_CRYPTO_CICLE,
-                ''
+            crypt
+            (
+                $contentToConvert,
+                DEFAULT_CRYPTO_CICLE.self::hashKeyGenerator().'$'
             );
 
 	}
@@ -91,10 +87,9 @@ class Crypto
      * @param string $hashKey
      * @return bool
      */
-	public static function hashComparer (string $targetString, string $hashKey) :bool {
+	public static function hashComparer (string $targetString, string $hashKey) : bool {
 
-	        $mergedCrypto = DEFAULT_CRYPTO_CICLE . $hashKey;
-            return crypt($targetString, $mergedCrypto) == $mergedCrypto;
+	    return crypt($targetString, $hashKey) == $hashKey;
 
 	}
 

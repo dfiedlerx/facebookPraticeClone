@@ -109,9 +109,9 @@ class ArrayC
      * @param array $array
      * @return bool
      */
-    public static function noEmptyArray (array $array) : bool {
+    public static function empty (array $array) : bool {
 
-        return count($array) > 0;
+        return count($array) == 0;
 
     }
 
