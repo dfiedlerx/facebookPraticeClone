@@ -93,7 +93,6 @@ class Usuarios extends Model
                     'id' => self::$DB->getLastInsertId(),
                     'nome' => $nome,
                     'email' => $email,
-                    'senha' => $senha,
                     'sexo' => $sexo
                 ]
             );
