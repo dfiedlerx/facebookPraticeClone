@@ -167,4 +167,15 @@ class Usuarios extends Model
 
     }
 
+    public static function logout () {
+
+        Session::unset
+        (
+            [
+                'lgsocial'
+            ]
+        );
+
+    }
+
 }

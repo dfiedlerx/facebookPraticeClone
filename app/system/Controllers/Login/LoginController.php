@@ -18,6 +18,7 @@ class LoginController extends Controller
 
         parent::__construct();
         Session::controlLoginSessionPage('lgsocial', false);
+        GlobalValue::set('login/menu', 'template->navbarMenu');
 
     }
 
@@ -52,17 +53,9 @@ class LoginController extends Controller
 
         }
 
-        GlobalValue::set('index','login->action');
+        GlobalValue::set('login/index','template->action');
 
-        return $this->loadView('login/template');
-
-    }
-
-    public function entrar () {
-
-        GlobalValue::set('entrar','login->action');
-
-        return $this->loadView('login/template');
+        return $this->loadView('template');
 
     }
 
@@ -121,9 +114,9 @@ class LoginController extends Controller
 
         }
 
-        GlobalValue::set('cadastrar','login->action');
+        GlobalValue::set('login/cadastrar','template->action');
 
-        return $this->loadView('login/template');
+        return $this->loadView('template');
 
     }
 

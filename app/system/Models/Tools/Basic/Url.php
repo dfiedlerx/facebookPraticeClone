@@ -9,7 +9,7 @@ class Url
 
     public static function redirect ($location) {
 
-        if (headers_sent()) {
+        if (!headers_sent()) {
 
             header('Location: ' . $location);
 

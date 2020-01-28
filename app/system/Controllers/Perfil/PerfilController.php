@@ -1,20 +1,13 @@
-<?php namespace System\Controllers\Home;
+<?php namespace System\Controllers\Perfil;
 
 
 use Core\Engine\Controller;
-use System\Models\Home\HomeMailer;
-use System\Models\Instances\Usuarios;
 use System\Models\Tools\Basic\GlobalValue;
 use System\Models\Tools\Basic\Session;
-use System\Models\Tools\Basic\Url;
 
 session_start();
 
-/**
- * Class HomeController
- * @package System\Controllers\Home
- */
-class HomeController extends Controller
+class PerfilController extends Controller
 {
 
     public function __construct() {
@@ -32,15 +25,8 @@ class HomeController extends Controller
      */
     public function index () {
 
-        GlobalValue::set('home/home', 'template->action');
+        GlobalValue::set('perfil/index', 'template->action');
         return $this->loadView ('template');
-
-    }
-
-    public function sair () {
-
-        Usuarios::logout();
-        Url::redirect(NOT_LOGGED_ROUTE);
 
     }
 

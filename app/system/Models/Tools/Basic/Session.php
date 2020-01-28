@@ -18,6 +18,16 @@ class Session
 
     }
 
+    public static function unset ($sessionParams) {
+
+        foreach ($sessionParams as $sessionValue) {
+
+            unset($_SESSION[$sessionValue]);
+
+        }
+
+    }
+
     /**
      * @return bool
      */
